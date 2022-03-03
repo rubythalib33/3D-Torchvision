@@ -2,12 +2,11 @@ from torchvision.models import alexnet
 from torch import conv3d, nn
 import torch
 
-alexnet_model = alexnet(pretrained=True)
-alexnet_model = alexnet_model.features
-
 class AlexNet3D(nn.Module):
-    def __init__(self):
+    def __init__(self, pretrained=False):
         super(AlexNet3D, self).__init__()
+        self.alexnet_model = alexnet(pretrained=pretrained)
+        self.alexnet_model = self.alexnet_model.features
         self.features = self.init_features()
 
     def forward(self, x):
@@ -15,7 +14,7 @@ class AlexNet3D(nn.Module):
 
     def init_features(self):
         features = []
-        for model in alexnet_model.children():
+        for model in self.alexnet_model.children():
             if isinstance(model, nn.Conv2d):
                 model_temp = nn.Conv3d(in_channels=model.in_channels, out_channels=model.out_channels, kernel_size=model.kernel_size[0], stride=model.stride[0], padding=model.padding[0])
                 model_temp.weight.data = torch.stack([model.weight.data] * model.kernel_size[0], dim=2)
