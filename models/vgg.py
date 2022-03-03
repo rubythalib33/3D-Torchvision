@@ -37,18 +37,20 @@ class VGG3D(nn.Module):
         self.features = self.init_features()
     
     def forward(self, x):
-        return self.features(x)
+        for m in self.features:
+            x = m(x)
+        return x
     
     def init_features(self):
         features = []
         for model in self.features.children():
             if isinstance(model, nn.Conv2d):
-                model_temp = nn.Conv3d(in_channels=model.in_channels, out_channels=model.out_channels, kernel_size=model.kernel_size[0], stride=model.stride[0], padding=model.padding[0])
-                model_temp.weight.data = torch.stack([model.weight.data] * model.kernel_size[0], dim=2)
+                model_temp = nn.Conv3d(in_channels=model.in_channels, out_channels=model.out_channels, kernel_size=(1,*model.kernel_size), stride=(1,*model.stride), padding=(0,*model.padding))
+                model_temp.weight.data = torch.stack([model.weight.data] , dim=2)
                 model_temp.bias.data = model.bias.data
                 features.append(model_temp)
             elif isinstance(model, nn.MaxPool2d):
-                model_temp = nn.MaxPool3d(kernel_size=model.kernel_size, stride=model.stride, padding=model.padding)
+                model_temp = nn.MaxPool3d(kernel_size=[1,model.kernel_size, model.kernel_size], stride=[1,model.stride, model.stride], padding=[0,model.padding, model.padding])
                 features.append(model_temp)
             elif isinstance(model, nn.ReLU):
                 features.append(model)
@@ -59,7 +61,7 @@ class VGG3D(nn.Module):
         return nn.Sequential(*features)
 
 if __name__ == '__main__':
-    example = torch.randn(1, 3, 224, 224, 224).cuda()
-    type_ = "vgg11"
+    example = torch.randn(1, 3, 3, 224, 224).cuda()
+    type_ = "vgg11_bn"
     model = VGG3D(type=type_).cuda()
     print(model(example).shape)
