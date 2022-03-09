@@ -18,7 +18,7 @@ python setup.py install
 # 1. AlexNet3D:
 from torchvision_3d.models import AlexNet3D:
 
-model = AlexNet3D
+model = AlexNet3D()
 
 # 2. VGG3D
 from torchvision_3d.models import VGG3D
