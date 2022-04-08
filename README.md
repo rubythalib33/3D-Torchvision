@@ -1,6 +1,8 @@
 # 3D-Torchvision
 3D torchvision with ImageNet Pretrained
 
+![](./assets/logo.png)
+
 ## it can be used for:
 1. Video Embedding
 2. Action Recognition
