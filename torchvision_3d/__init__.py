@@ -1,1 +1,1 @@
-from torchvision import models
+from torchvision_3d import models
