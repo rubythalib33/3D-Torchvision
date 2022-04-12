@@ -10,7 +10,9 @@ setup(
     install_requires=[
         'torch',
         'torchvision',],
-    packages=['torchvision_3d'],
+    packages={
+        'torchvision_3d.models': "torchvision_3d/models",
+    },
     python_requires=">=3.6",
     classifiers=[
         'Development Status :: 3 - Beta',
